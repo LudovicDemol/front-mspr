@@ -1,7 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import api from './api';
 
 const AUTH0_DOMAIN = process.env.VITE_AUTH0_DOMAIN;
 const NAMESPACE = process.env.VITE_AUTH0_NAMESPACE;
+
 export interface UserInfo {
   sub: string;
   email: string;
@@ -10,24 +12,20 @@ export interface UserInfo {
   [key: string]: any;
 }
 
+
 export const useAuthService = () => {
   const { getAccessTokenSilently, user } = useAuth0();
 
   const getUserInfo = async (): Promise<UserInfo> => {
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`https://${AUTH0_DOMAIN}/userinfo`, {
+      const response = await api.get(`https://${AUTH0_DOMAIN}/userinfo`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des informations utilisateur');
-      }
-
-      const userInfo = await response.json();
-      console.log(userInfo[`${NAMESPACE}roles`]);
+      const userInfo = response.data;
       return {
         ...userInfo,
         roles: userInfo[`${NAMESPACE}roles`] || []

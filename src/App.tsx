@@ -12,6 +12,7 @@ import { LoginButton } from './components/LoginButton';
 import { ProfileButton } from './components/ProfileButton';
 import { CartProvider } from './context/CartContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { OrderDetails } from './components/OrderDetails';
 
 function App() {
   return (
@@ -47,6 +48,14 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route 
+                path="/order/:id" 
+                element={
+                  <ProtectedRoute>
+                    <OrderDetails />
+                  </ProtectedRoute>
+                } 
+              />
               <Route
                 path="/admin/*"
                 element={

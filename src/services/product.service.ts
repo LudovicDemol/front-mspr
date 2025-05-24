@@ -1,52 +1,32 @@
 import type { Product } from '../types/Product';
 import { useAuth0 } from '@auth0/auth0-react';
-import { mockProducts } from '../data/mockData';
+import api from './api';
 
 export const useProductService = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const getProducts = async (): Promise<Product[]> => {
-    // Simuler un délai réseau
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return mockProducts;
+    const response = await api.get('/products');
+    return [];
   };
 
   const getProduct = async (id: number): Promise<Product> => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const product = mockProducts.find(p => p.id === id);
-    if (!product) {
-      throw new Error('Produit non trouvé');
-    }
-    return product;
+    const response = await api.get(`/products/${id}`);
+    return response.data;
   };
 
   const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const newProduct = {
-      ...product,
-      id: Math.max(...mockProducts.map(p => p.id)) + 1
-    };
-    mockProducts.push(newProduct);
-    return newProduct;
+    const response = await api.post('/products', product);
+    return response.data;
   };
 
   const updateProduct = async (id: number, product: Partial<Product>): Promise<Product> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const index = mockProducts.findIndex(p => p.id === id);
-    if (index === -1) {
-      throw new Error('Produit non trouvé');
-    }
-    mockProducts[index] = { ...mockProducts[index], ...product };
-    return mockProducts[index];
+    const response = await api.put(`/products/${id}`, product);
+    return response.data;
   };
 
   const deleteProduct = async (id: number): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const index = mockProducts.findIndex(p => p.id === id);
-    if (index === -1) {
-      throw new Error('Produit non trouvé');
-    }
-    mockProducts.splice(index, 1);
+    await api.delete(`/products/${id}`);
   };
 
   return {
